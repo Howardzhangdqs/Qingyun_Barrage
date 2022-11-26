@@ -10,6 +10,7 @@
 	"keywords": [
 		"barrage"
 	],
+	"pkg": {},
 	"type": "module",
 	"author": "HowardZhangdqs",
 	"license": "MIT",
