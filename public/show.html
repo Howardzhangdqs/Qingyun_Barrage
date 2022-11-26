@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+
+<head>
+    <meta charset="utf-8" />
+    <title>班会弹幕</title>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            overflow-y: hidden;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        #screen {
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgb(229, 229, 229);
+            background-size: cover;
+            white-space: nowrap;
+            background-position: 50% 50%;
+            background-image: url('./background.min.png');
+        }
+
+        .text {
+            position: absolute;
+            white-space: nowrap;
+            font-weight: bold;
+            animation: barrage 20s linear 0s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        @keyframes barrage {
+            from {
+                left: 100%;
+                transform: translateX(0);
+            }
+
+            to {
+                left: 0;
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+    <script src="./jquery.min.js"></script>
+</head>
+
+<body onresize="changesize()">
+    <div id="screen"></div>
+    <script>
+        const ip = "/";
+
+        const $screen = $("#screen");
+
+        const changesize = () => {
+
+            $screen[0].style.width = window.innerWidth + 'px'
+            $screen[0].style.height = window.innerHeight + 'px';
+            console.log(window.innerWidth + 'px', window.innerHeight + 'px')
+
+        }
+        $(() => {
+            changesize();
+        })
+        var alive_list = [];
+
+        $(function () {
+
+            var ws = new WebSocket("ws://" + window.location.host);
+            ws.onmessage = (data) => {
+                data = data.data;
+                if (data.slice(0, 1) == '#') {
+                    if (data.slice(0, 2) == '#!') {
+                        console.log(data);
+                        clearInterval(question);
+                        addwords(data.slice(2), true);
+                        question = setInterval(() => {
+                            addwords(data.slice(2), true)
+                        }, 8000);
+
+                    } else if (data.slice(0, 2) == '#*') {
+                        for (let i = 1; i <= 10; i++)
+                            addwords(data.slice(2));
+                    }
+                } else addwords(data);
+            };
+
+            function addwords(val, sc) {
+                sc = sc || false;
+                console.log(val);
+                let $content = $('<div class="text">' + val + '</div>');
+
+                //$screen = $(document.getElementById("screen"));
+
+                let top = Math.random() * $screen.height();
+                //console.log(top)
+                let base_size = 40
+                if (sc) top = 20, base_size = 50;
+                else {
+                    let loop_times = 0;
+                    while (true) {
+                        let is_alive = false
+                        if (loop_times >= 114) {
+                            top = alive_list[0] + Math.random() * 10 - 5;
+                            alive_list.splice(0, 1)
+                            alive_list.push(top);
+                            break
+                        }
+                        for (element of alive_list) {
+                            if (element + 40 >= top && element - 40 <= top) is_alive = element;
+                        }
+                        if (top <= window.innerHeight - 60 && top >= 80 && is_alive == false) {
+                            alive_list.push(top);
+                            break
+                        }
+                        top = Math.random() * $screen.height();
+                        loop_times++;
+                    };
+                }
+                $content.css({
+                    top: top + "px",
+                    left: $screen.width() + $content.width(),//9810
+                    "font-size": base_size,// + Math.random() * 5,
+                    color: "rgb(" + Math.round(Math.random() * 100) + "," + Math.round(Math.random() * 100) + "," + Math.round(Math.random() * 100) + ")",
+                });
+                $screen.append($content);
+                setTimeout(() => {
+                    $content.remove();
+                    delete $content;
+                }, 20 * 1000);
+            };
+
+            var question;
+            const shitting = setInterval(() => {
+                addwords('欢迎参与讨论!');
+            }, 2000);
+
+            setTimeout(() => {
+                clearInterval(shitting);
+            }, 6000);
+        });
+    </script>
+
+</body>

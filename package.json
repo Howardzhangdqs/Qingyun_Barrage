@@ -1,0 +1,21 @@
+{
+	"name": "barrage",
+	"version": "1.0.0",
+	"description": "barrage",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+	},
+	"keywords": [
+		"barrage"
+	],
+	"type": "module",
+	"author": "HowardZhangdqs",
+	"license": "MIT",
+	"dependencies": {
+		"chalk": "^5.1.2",
+		"express": "^4.18.2",
+		"express-ws": "^5.0.2"
+	}
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ch">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>发个弹幕吧</title>
+	<link rel="stylesheet" type="text/css" href="./name.css" />
+	<script src="./axios.min.js"></script>
+	<script src="./vue.global.min.js"></script>
+</head>
+
+<body>
+	<div>
+		<h1>青云弹幕机</h1>
+		<table id="app">
+			<tbody>
+				<tr>
+					<td>
+						<input placeholder="发个弹幕吧" type="text" id="data_in" v-model.trim="usermsg" />
+					</td>
+					<td><button id="send" class="but" @click="postmsg">发送</button></td>
+				</tr>
+				<tr>
+					<td colspan='2'>
+						<div style="display:flex; justify-content: center;">
+							连发模式&nbsp;&nbsp;<input class="tgl tgl-skewed" id="cb3" type="checkbox"
+								v-model="consecutive" />
+							<label class="tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td colspan='2' v-text="msgs[msg]"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+
+		axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+		const app = Vue.createApp({
+			data() {
+				return {
+					msg: 0,
+					msgs: [
+						"来发弹幕罢（喜",
+						"发送成功",
+						"发送失败，请揍两下rsy后重试",
+						"发送中……请稍后，揍两下rsy以加速",
+						"请输入点东西罢（悲"
+					],
+					usermsg: "",
+					consecutive: false
+				}
+			},
+			methods: {
+				postmsg() {
+					if (this.usermsg == "") {
+						this.msg = 4; return;
+					}
+
+					this.msg = 3;
+
+					axios.post("./", {
+						data: this.usermsg
+					}).then((res) => {
+						this.msg = 1;
+					}).catch(() => {
+						this.msg = 2;
+					});
+					if (!this.consecutive) this.usermsg = "";
+				},
+			},
+		}).mount("#app");
+	</script>
+</body>
+
+</html>
