@@ -69,26 +69,44 @@
 
         $(function () {
 
+            var question;
+
             var ws = new WebSocket("ws://" + window.location.host);
             ws.onmessage = (data) => {
                 data = data.data;
                 if (data.slice(0, 1) == '#') {
-                    if (data.slice(0, 2) == '#!') {
+                    let key = data.slice(0, 2);
+                    data = data.slice(2);
+                    if (key == '#!') {
                         console.log(data);
                         clearInterval(question);
-                        addwords(data.slice(2), true);
+                        addwords(data, true);
                         question = setInterval(() => {
-                            addwords(data.slice(2), true)
+                            addwords(data, true)
                         }, 8000);
-
-                    } else if (data.slice(0, 2) == '#*') {
+                    } else if (key == '#*') {
                         for (let i = 1; i <= 10; i++)
-                            addwords(data.slice(2));
+                            addwords(data);
+                    } else if (key == '#b') {
+                        addwords(data, false, true);
                     }
                 } else addwords(data);
             };
 
-            function addwords(val, sc) {
+            const ban_words = [
+                "gq", "sb", "郭倩", "党"
+            ];
+
+            const check_ban = (str) => {
+                for (let i in ban_words)
+                    if (str.indexOf(ban_words[i]) >= 0)
+                        return true;
+                return false;
+            };
+
+            function addwords(val, sc, ban) {
+
+                ban = ban || check_ban(val) || false;
                 sc = sc || false;
                 console.log(val);
                 let $content = $('<div class="text">' + val + '</div>');
@@ -126,6 +144,11 @@
                     "font-size": base_size,// + Math.random() * 5,
                     color: "rgb(" + Math.round(Math.random() * 100) + "," + Math.round(Math.random() * 100) + "," + Math.round(Math.random() * 100) + ")",
                 });
+                if (ban) {
+                    $content.css({
+                        filter: "blur(10px)",
+                    });
+                }
                 $screen.append($content);
                 setTimeout(() => {
                     $content.remove();

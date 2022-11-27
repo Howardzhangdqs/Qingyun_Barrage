@@ -4,36 +4,49 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>发个弹幕吧</title>
-	<link rel="stylesheet" type="text/css" href="./name.css" />
+	<link rel="stylesheet" type="text/css" href="./switch.css" />
 	<script src="./axios.min.js"></script>
 	<script src="./vue.global.min.js"></script>
+	<script type="text/javascript" src="js/mdb.min.js"></script>
+	<link rel="stylesheet" href="css/mdb.min.css" />
+	<style>
+		* {
+			font-size: 110%;
+		}
+
+		h1, #send {
+			font-weight: bold;
+		}
+
+		body {
+			background-color: #7deeff;
+		}
+
+		.input-group {
+			width: 20em;
+		}
+
+	</style>
 </head>
 
 <body>
-	<div>
-		<h1>青云弹幕机</h1>
-		<table id="app">
-			<tbody>
-				<tr>
-					<td>
-						<input placeholder="发个弹幕吧" type="text" id="data_in" v-model.trim="usermsg" />
-					</td>
-					<td><button id="send" class="but" @click="postmsg">发送</button></td>
-				</tr>
-				<tr>
-					<td colspan='2'>
-						<div style="display:flex; justify-content: center;">
-							连发模式&nbsp;&nbsp;<input class="tgl tgl-skewed" id="cb3" type="checkbox"
-								v-model="consecutive" />
-							<label class="tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td colspan='2' v-text="msgs[msg]"></td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="container">
+		<div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+			<div class="text-center" id="app">
+				<h1>青云弹幕机</h1>
+				<div class="input-group mb-3">
+					<input type="text" class="form-control" placeholder="发个弹幕吧" type="text" id="data_in"
+						v-model.trim="usermsg" />
+					<button id="send" type="button" class="btn btn-primary" @click="postmsg">发送</button>
+				</div>
+				<div style="display:flex; justify-content: center;" class="align-items-center">
+					连发模式&nbsp;&nbsp;
+					<input class="tgl tgl-skewed" id="cb3" type="checkbox" v-model="consecutive" />
+					<label class="tgl-btn" data-tg-off="OFF" data-tg-on="ON" for="cb3"></label>
+				</div>
+				<div v-text="msgs[msg]"></div>
+			</div>
+		</div>
 	</div>
 
 	<script>
